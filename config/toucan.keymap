@@ -4,71 +4,220 @@
 #include <dt-bindings/zmk/outputs.h>
 
 #define BASE 0
-#define NAV  1
+#define NUM  1
 #define SYM  2
-#define ADJ  3
+#define FUN  3
 
+#define HYPER LA(LS(LCTRL))
+
+/* Macros */
+/ {
+    macros {
+        bt_0: bt_0 {
+            label = "BT_0";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 0>;
+        };
+
+        bt_1: bt_1 {
+            label = "BT_1";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 1>;
+        };
+
+        bt_2: bt_2 {
+            label = "BT_2";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 2>;
+        };
+
+        bt_3: bt_3 {
+            label = "BT_3";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 3>;
+        };
+    };
+};
+
+/* Behaviors */
+/ {
+    behaviors {
+        comma_semi: comma_semi {
+            compatible = "zmk,behavior-mod-morph";
+            label = "SEMI_COMMA";
+            #binding-cells = <0>;
+            bindings = <&kp COMMA>, <&kp SEMI>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        dot_excl: dot_excl {
+            compatible = "zmk,behavior-mod-morph";
+            label = "EXCL_DOT";
+            #binding-cells = <0>;
+            bindings = <&kp DOT>, <&kp EXCL>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        bspc_del: bspc_del {
+            compatible = "zmk,behavior-mod-morph";
+            label = "BSPC_DEL";
+            #binding-cells = <0>;
+            bindings = <&kp BSPC>, <&kp DEL>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        sh_caps: sh_caps {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&sk LSHIFT>, <&caps_word>;
+        };
+
+
+    };
+};
+
+/* Conditional layer: both layer keys held = FUN */
 / {
     conditional_layers {
         compatible = "zmk,conditional-layers";
         tri_layer {
-            if-layers = <1 2>;
-            then-layer = <3>;
+            if-layers = <NUM SYM>;
+            then-layer = <FUN>;
         };
     };
+};
 
+/*
+ * Combos - positions remapped from Go60 to Toucan 42-key layout
+ *
+ *  0  1  2  3  4  5  |  6  7  8  9 10 11
+ * 12 13 14 15 16 17  | 18 19 20 21 22 23
+ * 24 25 26 27 28 29  | 30 31 32 33 34 35
+ *          36 37 38  | 39 40 41
+ *
+ * TAB  Q  W  F  P  B  |  J  L  U  Y CTL BS
+ * ESC  A  R  S  T  G  |  M  N  E  I  O  '
+ * SHF  Z  X  C  D  V  |  K  H  ,  .  /  SHF
+ *        GUI SPC SYM  | NUM SHF ALT
+ */
+/ {
+    combos {
+        compatible = "zmk,combos";
+
+        combo_CD_V {
+            key-positions = <27 28>;
+            bindings = <&kp V>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_CommaDot_return {
+            key-positions = <32 33>;
+            bindings = <&kp RET>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_DotSlash_HYPER_R {
+            key-positions = <33 34>;
+            bindings = <&kp LS(LA(LC(LG(RBKT))))>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_FP_B {
+            key-positions = <3 4>;
+            bindings = <&kp B>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_SX_delete {
+            key-positions = <15 26>;
+            bindings = <&kp BSPC>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_UY_J {
+            key-positions = <8 9>;
+            bindings = <&kp J>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_WF_Q {
+            key-positions = <3 2>;
+            bindings = <&kp Q>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_XD_K {
+            key-positions = <26 28>;
+            bindings = <&kp K>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_ZC_TAB {
+            key-positions = <27 25>;
+            bindings = <&kp TAB>;
+            layers = <BASE NUM SYM>;
+        };
+
+        combo_ZX_HYPER_L {
+            key-positions = <25 26>;
+            bindings = <&kp LC(LS(LA(LG(LBKT))))>;
+            layers = <BASE NUM SYM>;
+        };
+
+
+    };
+};
+
+/* Keymap */
+/ {
     keymap {
         compatible = "zmk,keymap";
 
-        base {
+        layer_Base {
             display-name = "BASE";
             bindings = <
-                &kp TAB   &kp Q &kp W &kp E &kp R &kp T   &kp Y &kp U  &kp I     &kp O   &kp P    &kp BSPC
-                &kp LCTRL &kp A &kp S &kp D &kp F &kp G   &kp H &kp J  &kp K     &kp L   &kp SEMI &kp SQT
-                &kp LSHFT &kp Z &kp X &kp C &kp V &kp B   &kp N &kp M  &kp COMMA &kp DOT &kp FSLH &kp ESC
-                                &kp LGUI &mo 1 &kp SPACE   &kp RET &mo 2 &kp RALT
+     &kp TAB        &kp Q  &kp W  &kp F  &kp P  &kp B      &kp J  &kp L  &kp U  &kp Y  &kp RCTRL  &bspc_del
+     &mt HYPER ESC  &kp A  &kp R  &kp S  &kp T  &kp G      &kp M  &kp N  &kp E  &kp I  &kp O     &kp SQT
+     &kp LSHFT      &kp Z  &kp X  &kp C  &kp D  &kp V      &kp K  &kp H  &comma_semi    &dot_excl    &kp FSLH  &kp RSHFT
+                              &kp LGUI  &kp SPACE  &sl SYM      &sl NUM  &sh_caps  &kp RALT
             >;
         };
 
-        nav {
-            display-name = "NAV";
+        layer_NUM {
+            display-name = "NUM";
             bindings = <
-                &kp TAB     &kp N1          &kp N2       &kp N3       &kp N4       &kp N5         &kp N6   &kp N7   &kp N8 &kp N9    &kp N0 &kp BSPC
-                &bt BT_CLR  &bt BT_SEL 0    &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4   &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
-                &kp LSHFT   &studio_unlock  &trans       &trans       &trans       &trans         &trans   &trans   &trans &trans    &trans &trans
-                                                &kp LGUI     &trans       &kp SPACE      &kp RET  &trans   &kp RALT
+     &trans  &none         &kp N7  &kp N8  &kp N9  &none       &none     &kp LS(N5)  &kp LS(LBKT)  &kp LS(RBKT)  &none        &trans
+     &to 0  &kp N0        &kp N4  &kp N5  &kp N6  &kp LA(N3)  &kp LEFT  &kp DOWN    &kp UP        &kp RIGHT     &kp EQUAL    &none
+     &trans &kp LS(EQUAL)  &kp N1  &kp N2  &kp N3  &kp LS(N4)       &none     &kp LS(N8)  &kp LS(N9)    &kp LS(N0)    &kp LS(SEMI) &trans
+                                    &trans  &trans   &trans      &trans    &trans      &trans
             >;
         };
 
-        sym {
+        layer_SYM {
             display-name = "SYM";
             bindings = <
-                &kp TAB   &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT   &kp CARET &kp AMPS  &kp KP_MULTIPLY &kp LPAR &kp RPAR &kp BSPC
-                &kp LCTRL &trans   &trans &trans   &trans   &trans      &kp MINUS &kp EQUAL &kp LBKT        &kp RBKT &kp BSLH &kp GRAVE
-                &kp LSHFT &trans   &trans &trans   &trans   &trans      &kp UNDER &kp PLUS  &kp LBRC        &kp RBRC &kp PIPE &kp TILDE
-                                          &kp LGUI &trans   &kp SPACE   &kp RET   &trans    &kp RALT
+     &trans  &none       &kp LS(COMMA)  &kp LS(DOT)  &kp LS(GRAVE)  &none   &kp C_MUTE   &kp C_VOL_DN  &kp C_BRI_DN  &kp C_BRI_UP  &kp C_VOL_UP  &trans
+     &trans  &kp MINUS   &kp LBKT       &kp RBKT     &kp LS(MINUS)  &none   &none         &kp LS(N7)    &kp LS(N6)    &kp LS(N4)    &kp C_NEXT    &none
+     &trans  &kp LS(TAB) &kp TAB        &kp GRAVE    &kp LS(N3)     &none   &none         &kp LS(N2)    &kp BSLH      &kp LS(BSLH)  &trans        &trans
+                                          &trans  &trans  &trans     &trans  &trans        &trans
             >;
         };
 
-        adj {
-            display-name = "ADJ";
+        layer_FUN {
+            display-name = "FUN";
             bindings = <
-                &mo TAB   &trans &kp F7 &kp F8 &kp F9 &kp F12   &kp C_VOL_DN &kp C_MUTE  &kp C_VOL_UP &trans &trans &kp BSPC
-                &kp LCTRL &trans &kp F4 &kp F5 &kp F6 &kp F11   &trans       &trans      &trans       &trans &trans &trans
-                &bt LSHFT &trans &kp F1 &kp F2 &kp F3 &kp F10   &trans       &trans      &trans       &trans &trans &trans
-                                   &kp LGUI &mo NAV &kp SPACE   &kp RET &mo 2 &kp RALT
+     &none  &none  &kp F7  &kp F8  &kp F9  &kp F10   &none          &none  &none  &none  &none  &bt BT_CLR
+     &none  &none  &kp F4  &kp F5  &kp F6  &kp F11   &out OUT_TOG   &bt_0  &bt_1  &bt_2  &bt_3  &none
+     &none  &none  &kp F1  &kp F2  &kp F3  &kp F12   &none          &none  &none  &none  &none  &studio_unlock
+                                 &trans  &trans  &trans   &trans  &trans  &trans
             >;
         };
-        extra_1 {
-                status = "reserved";
-        };
 
-        extra_2 {
-                status = "reserved";
-        };
 
-        extra_3 {
-                status = "reserved";
-        };
     };
 };
