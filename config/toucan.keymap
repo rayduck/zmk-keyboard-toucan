@@ -103,13 +103,13 @@
 };
 
 &glidepoint_listener {
-    input-processors = <&zip_xy_scaler 400 100>, <&zip_temp_layer MOUSE 500>;
+    input-processors = <&zip_xy_scaler 200 100>, <&zip_temp_layer MOUSE 500>;
     scroller {
         layers = <NUM SYM SCROLL>;
         input-processors = <
             &zip_xy_to_scroll_mapper
             &zip_scroll_scaler 1 5
-            &zip_scroll_transform INPUT_TRANSFORM_X_INVERT
+            &zip_scroll_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
         >;
     };
 };
