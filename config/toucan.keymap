@@ -103,7 +103,7 @@
 };
 
 &glidepoint_listener {
-    input-processors = <&zip_xy_scaler 200 100>, <&zip_temp_layer MOUSE 500>;
+    input-processors = <&zip_xy_scaler 400 100>, <&zip_temp_layer MOUSE 500>;
     scroller {
         layers = <NUM SYM SCROLL>;
         input-processors = <
